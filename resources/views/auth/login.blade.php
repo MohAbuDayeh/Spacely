@@ -86,9 +86,9 @@
                           id="rememberme"
                           name="remember"
                         />
-                        <label class="custom-control-label" for="rememberme">
+                        {{-- <label class="custom-control-label" for="rememberme">
                           Remember Me
-                        </label>
+                        </label> --}}
                       </div>
                     </div>
 

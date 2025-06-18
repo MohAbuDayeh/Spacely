@@ -24,10 +24,10 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            // بعد تسجيل الدخول بنجاح، التحقق من الدور
+
             $user = Auth::user();
 
-            // التوجيه بناءً على الدور
+
             if ($user->role == 'admin') {
                 return redirect()->route('admin.dashboard');
             } elseif ($user->role == 'lessor') {
@@ -36,7 +36,7 @@ class LoginController extends Controller
                 return redirect()->route('renter.dashboard');
             }
 
-            // إذا لم يكن لديه أي دور، يمكن توجيههم إلى الصفحة الرئيسية أو صفحة خطأ
+            
             return redirect()->route('home');
         }
 

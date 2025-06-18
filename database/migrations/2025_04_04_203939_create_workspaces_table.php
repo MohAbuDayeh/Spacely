@@ -13,23 +13,36 @@ return new class extends Migration
     {
         Schema::create('workspaces', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // المؤجر (Lessor)
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('description');
             $table->string('location');
+            $table->string('address')->nullable();
+            $table->enum('governorate', [
+                "Amman", "Zarqa", "Irbid", "Aqaba", "Mafraq",
+                "Balqa", "Karak", "Madaba", "Tafilah", "Jerash",
+                "Ajloun", "Maan"
+            ])->default("Amman");
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
+
             $table->decimal('price_per_hour', 10, 2)->nullable();
             $table->decimal('price_per_day', 10, 2)->nullable();
             $table->decimal('price_per_month', 10, 2)->nullable();
             $table->integer('minimum_term')->default(1);
-            $table->enum('minimum_term_unit', ['hour', 'day'])->default('hour');
+            $table->enum('minimum_term_unit', ['hour', 'day', 'month'])->default('hour');
             $table->decimal('size', 8, 2);
             $table->integer('people_capacity');
-            $table->enum('space_type', ['Coworking space', 'Meeting space', 'Office space']);
+            $table->enum('space_type', ['Coworking space', 'Meeting space', 'Private Office']);
             $table->enum('status', ['available', 'booked'])->default('available');
-            $table->decimal('rating', 2, 1)->default(0);  // إضافة عمود التقييم
-            $table->string('image')->nullable();  // إضافة عمود الصورة
+            $table->decimal('rating', 2, 1)->default(0);
+            $table->json('images')->nullable();
+            $table->string('video_url')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->index(['governorate', 'status']);
+            $table->index(['latitude', 'longitude']);
+            $table->index('space_type');
         });
     }
 

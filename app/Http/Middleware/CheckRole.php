@@ -4,27 +4,26 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CheckRole
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string  $role
-     * @return mixed
-     */
-    public function handle(Request $request, Closure $next, $role)
+    public function handle(Request $request, Closure $next, ...$roles)
     {
-        // تحقق إذا كان المستخدم مسجلاً دخوله
-        if (!auth()->check()) {
-            return redirect()->route('login'); // إعادة التوجيه إلى صفحة تسجيل الدخول إذا كان المستخدم غير مسجل
+        // إذا لم يكن مسجلاً دخوله
+        if (!Auth::check()) {
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Unauthenticated'], 401)
+                : redirect()->route('auth.login');
         }
 
-        // تحقق من دور المستخدم
-        if (auth()->user()->role !== $role) {
-            return redirect()->route('home'); // إعادة التوجيه إذا لم يكن لديه الدور المناسب
+        $user = Auth::user();
+
+        // إذا لم يكن لديه أي من الأدوار المطلوبة
+        if (!in_array($user->role, $roles)) {
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Forbidden'], 403)
+                : redirect()->route('home')->with('error', 'You do not have access to this section');
         }
 
         return $next($request);

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['admin', 'lessor', 'renter'])->default('renter');
             $table->string('phone');
+            $table->string('image')->nullable();
+            $table->string('company')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

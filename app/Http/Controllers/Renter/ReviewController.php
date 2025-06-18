@@ -24,6 +24,29 @@ class ReviewController extends Controller
         return view('renter.reviews.index', compact('reviews'));
     }
 
+    // store function
+    public function store(Request $request)
+    {
+        // dd($request->all());
+        // التحقق من صحة المدخلات
+        $request->validate([
+            'workspace_id' => 'required|exists:workspaces,id',
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
+
+        ]);
+
+        // إنشاء مراجعة جديدة
+        Review::create([
+            'user_id' => auth()->id(),
+            'workspace_id' => $request->workspace_id,
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+        ]);
+
+        return redirect()->back()->with('success', 'Your review has been submitted!');
+    }
+
     // إذا كنت بحاجة إلى إضافة وظيفة الرد، يمكنك إضافتها هنا
     public function respond(Request $request, Review $review)
     {

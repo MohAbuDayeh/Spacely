@@ -7,22 +7,23 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
 
-    protected $fillable = ['name', 'email', 'password', 'role', 'phone'];
+    protected $fillable = ['name', 'email', 'password', 'role', 'phone', 'image', 'company'];
 
     protected $hidden = ['password'];
 
     public function workspaces()
     {
-        return $this->hasMany(Workspace::class); // المؤجر
+        return $this->hasMany(Workspace::class);
     }
 
     public function bookings()
     {
-        return $this->hasMany(Booking::class); // المستأجر
+        return $this->hasMany(Booking::class);
     }
 
     public function favorites()
@@ -38,4 +39,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Quote::class);
     }
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
 }
+
